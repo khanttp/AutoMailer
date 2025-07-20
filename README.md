@@ -1,6 +1,8 @@
 # AutoMailer
 
-A Google Apps Script that helps you send personalized emails directly from a Google Sheet using a Gmail draft. It sends emails in timed batches so you stay within Gmail's daily limits. Great for an org. or a campaign that needs sending out mass emails without hitting Google's spam detection or rate limits.
+A Google Apps Script that helps you send personalized emails directly from a Google Sheet using a Gmail draft. It sends emails in timed batches so you stay within Gmail's daily limits. Great for an org. or a campaign that needs sending out mass emails easily without hitting Google's spam detection or rate limits.
+
+**Feel free to use/edit the script to fit your (business) needs**
 
 ---
 
