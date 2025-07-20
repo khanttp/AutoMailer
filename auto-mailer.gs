@@ -53,7 +53,7 @@ function startAutoMailer() {
 function sendEmails() {
   const sheet = SpreadsheetApp.getActiveSheet();
   const properties = PropertiesService.getUserProperties();
-  const currentUser = Session.getActiveUser().getEmail(); // Get current user's email for notifications
+  const currentUser = Session.getActiveUser().getEmail(); 
 
   const subjectLine = properties.getProperty('autoMailerSubject');
   let lastProcessedRow = parseInt(properties.getProperty('lastProcessedRow'), 10);
@@ -97,14 +97,14 @@ function sendEmails() {
 
       } catch (e) {
         if (e.message.includes('Service invoked too many times')) {
+          // Log the quota error message in the 'Email Sent' column
+          sheet.getRange(i + 1, emailSentColIdx + 1).setValue(e.message);
 
-          // Email notification to the user with the error
-          const subject = 'Auto Mailer Error: Quota Reached';
-          const body = 'The Auto Mailer script has stopped because you have reached your daily email sending quota. Please reset the mailer and try again in 24 hours.';
-          MailApp.sendEmail(currentUser, subject, body);
+          // Stop the mailer
           deleteTriggers_();
           return;
         } else {
+          // Log any other errors in the 'Email Sent' column
           sheet.getRange(i + 1, emailSentColIdx + 1).setValue(e.message);
         }
       }
@@ -121,6 +121,7 @@ function sendEmails() {
     MailApp.sendEmail(currentUser, subject, body);
   }
 }
+
 /**
  * Deletes all triggers and clears user properties.
  */
