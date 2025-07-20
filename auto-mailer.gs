@@ -53,6 +53,7 @@ function startAutoMailer() {
 function sendEmails() {
   const sheet = SpreadsheetApp.getActiveSheet();
   const properties = PropertiesService.getUserProperties();
+  const currentUser = Session.getActiveUser().getEmail(); // Get current user's email for notifications
 
   const subjectLine = properties.getProperty('autoMailerSubject');
   let lastProcessedRow = parseInt(properties.getProperty('lastProcessedRow'), 10);
@@ -96,7 +97,11 @@ function sendEmails() {
 
       } catch (e) {
         if (e.message.includes('Service invoked too many times')) {
-          SpreadsheetApp.getUi().alert('Daily email quota reached. The script has been stopped. Please reset and try again after the quota resets (usually within 24 hours).');
+
+          // Email notification to the user with the error
+          const subject = 'Auto Mailer Error: Quota Reached';
+          const body = 'The Auto Mailer script has stopped because you have reached your daily email sending quota. Please reset the mailer and try again in 24 hours.';
+          MailApp.sendEmail(currentUser, subject, body);
           deleteTriggers_();
           return;
         } else {
@@ -104,23 +109,18 @@ function sendEmails() {
         }
       }
     }
-
-    // Save the last processed row after every single row is attempted.
     lastProcessedRow = i;
     properties.setProperty('lastProcessedRow', lastProcessedRow.toString());
   }
 
-  // If the last processed row is the end of the sheet, clean up.
   if (lastProcessedRow >= data.length - 1) {
     resetMailer();
-    SpreadsheetApp.getUi().alert(
-      'Auto Mailer Complete',
-      'All emails have been processed.',
-      SpreadsheetApp.getUi().ButtonSet.OK
-    );
+    // Email notification to the user
+    const subject = 'Auto Mailer Complete';
+    const body = 'The Auto Mailer script has successfully processed all emails.';
+    MailApp.sendEmail(currentUser, subject, body);
   }
 }
-
 /**
  * Deletes all triggers and clears user properties.
  */
